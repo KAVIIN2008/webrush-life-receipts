@@ -89,7 +89,7 @@ export function ConnectionExplorer({
               {formatDay(day)}
             </h2>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/45">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/50">
               {receipts.length} receipts appear on this day across{' '}
               {groups.length} different receipt types. Explore each group to see
               the evidence behind the connection.
@@ -107,7 +107,7 @@ export function ConnectionExplorer({
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/8 bg-black/15 p-4">
-            <div className="flex items-center gap-2 text-white/35">
+            <div className="flex items-center gap-2 text-white/50">
               <CalendarDays size={15} />
               <span className="text-xs">Calendar overlap</span>
             </div>
@@ -115,7 +115,7 @@ export function ConnectionExplorer({
           </div>
 
           <div className="rounded-2xl border border-white/8 bg-black/15 p-4">
-            <div className="flex items-center gap-2 text-white/35">
+            <div className="flex items-center gap-2 text-white/50">
               <Link2 size={15} />
               <span className="text-xs">Receipt types</span>
             </div>
@@ -123,7 +123,7 @@ export function ConnectionExplorer({
           </div>
 
           <div className="rounded-2xl border border-white/8 bg-black/15 p-4">
-            <div className="flex items-center gap-2 text-white/35">
+            <div className="flex items-center gap-2 text-white/50">
               <Clock3 size={15} />
               <span className="text-xs">Evidence items</span>
             </div>
@@ -151,13 +151,13 @@ export function ConnectionExplorer({
 
                   <div className="min-w-0">
                     <p className="text-sm font-semibold">{typeLabel(kind)}</p>
-                    <p className="mt-1 text-xs text-white/30">
+                    <p className="mt-1 text-xs text-white/50">
                       {items.length} {items.length === 1 ? 'receipt' : 'receipts'}
                     </p>
                   </div>
                 </div>
 
-                <div className="shrink-0 text-white/30">
+                <div className="shrink-0 text-white/50">
                   {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </div>
               </button>
@@ -171,7 +171,7 @@ export function ConnectionExplorer({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-[10px] uppercase tracking-[0.16em] text-white/25">
+                          <p className="text-[10px] uppercase tracking-[0.16em] text-white/50">
                             {typeLabel(receipt.kind)}
                           </p>
                           <h3 className="mt-1 text-sm font-semibold leading-5">
@@ -179,26 +179,26 @@ export function ConnectionExplorer({
                           </h3>
                         </div>
 
-                        <span className="shrink-0 text-xs text-white/30">
+                        <span className="shrink-0 text-xs text-white/50">
                           {formatTime(receipt.timestamp)}
                         </span>
                       </div>
 
                       {receipt.subtitle && (
-                        <p className="mt-2 text-xs leading-5 text-white/40">
+                        <p className="mt-2 text-xs leading-5 text-white/50">
                           {receipt.subtitle}
                         </p>
                       )}
 
                       <div className="mt-3 flex flex-wrap gap-2">
                         {receipt.category && (
-                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/40">
+                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/50">
                             {receipt.category}
                           </span>
                         )}
 
                         {receipt.location?.city && (
-                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/40">
+                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/50">
                             {receipt.location.city}
                           </span>
                         )}
@@ -213,7 +213,7 @@ export function ConnectionExplorer({
       </div>
 
       <div className="border-t border-white/10 px-5 py-4 sm:px-7">
-        <p className="text-xs leading-5 text-white/30">
+        <p className="text-xs leading-5 text-white/50">
           Relationship shown: these receipts share the same calendar date.
           The explorer exposes the underlying records so the connection can be
           inspected rather than inferred.
