@@ -11,9 +11,9 @@ import { buildPatternSummary, type PatternSummary } from '../features/patterns/p
 import { formatDay } from '../utils/formatting'
 import type { Receipt } from '../types/receipt'
 
-const StoryMode = lazy(() => import('./components/story/StoryMode').then((module) => ({ default: module.StoryMode })))
-const ConnectionExplorer = lazy(() => import('./components/connections/ConnectionExplorer').then((module) => ({ default: module.ConnectionExplorer })))
-const LifePatterns = lazy(() => import('./components/dashboard/LifePatterns').then((module) => ({ default: module.LifePatterns })))
+const StoryMode = lazy(() => import('../components/story/StoryMode').then((module) => ({ default: module.StoryMode })))
+const ConnectionExplorer = lazy(() => import('../components/connections/ConnectionExplorer').then((module) => ({ default: module.ConnectionExplorer })))
+const LifePatterns = lazy(() => import('../components/dashboard/LifePatterns').then((module) => ({ default: module.LifePatterns })))
 
 const EMPTY_RECEIPTS: Receipt[] = []
 
