@@ -9,6 +9,8 @@
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { Receipt } from '../../types/receipt'
+import { dayOf } from '../../features/receipts/selectors'
+import { formatClockTime, formatLongDay } from '../../utils/formatting'
 import { findRelatedByArtist, findRelatedByCategory } from '../../features/patterns/patterns'
 
 type Props = {
@@ -16,24 +18,6 @@ type Props = {
   receipts: Receipt[]
   allReceipts: Receipt[]
   onClear: () => void
-}
-
-function formatDay(day: string) {
-  return new Intl.DateTimeFormat('en-IN', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(`${day}T00:00:00`))
-}
-
-function formatTime(timestamp?: string | null) {
-  if (!timestamp) return 'No timestamp'
-
-  return new Intl.DateTimeFormat('en-IN', {
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(new Date(timestamp))
 }
 
 function typeLabel(kind: Receipt['kind']) {
@@ -100,6 +84,43 @@ export function ConnectionExplorer({
     }
   }, [allReceipts, receipts])
 
+  const artistRelations = useMemo(() => {
+    const links: Array<{
+      artist: string
+      sourceTitle: string
+      related: Receipt
+    }> = []
+    const seen = new Set<string>()
+
+    for (const source of receipts) {
+      const sourceArtists = new Set(source.meta?.topArtists ?? [])
+      if (!sourceArtists.size) continue
+
+      for (const related of findRelatedByArtist(source, allReceipts, 8)) {
+        if (!dayOf(related) || dayOf(related) === dayOf(source)) continue
+
+        const sharedArtist = (related.meta?.topArtists ?? []).find((artist) =>
+          sourceArtists.has(artist),
+        )
+        if (!sharedArtist) continue
+
+        const key = related.id + '::' + sharedArtist
+        if (seen.has(key)) continue
+
+        seen.add(key)
+        links.push({
+          artist: sharedArtist,
+          sourceTitle: source.title,
+          related,
+        })
+
+        if (links.length >= 6) return links
+      }
+    }
+
+    return links
+  }, [allReceipts, receipts])
+
   return (
     <section className="mb-10 overflow-hidden rounded-[2rem] border border-lime-300/15 bg-[linear-gradient(135deg,rgba(190,255,80,0.06),rgba(120,100,255,0.05))]">
       <div className="border-b border-white/10 p-5 sm:p-7">
@@ -111,7 +132,7 @@ export function ConnectionExplorer({
             </div>
 
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              {formatDay(day)}
+              {formatLongDay(day)}
             </h2>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-white/50">
@@ -170,6 +191,37 @@ export function ConnectionExplorer({
         </div>
       </div>
 
+      {artistRelations.length > 0 && (
+        <div className="border-b border-white/10 p-5 sm:p-7">
+          <div>
+            <p className="text-xs uppercase tracking-[0.16em] text-white/50">Related by artist</p>
+            <h3 className="mt-2 text-xl font-semibold">Same artist, different day.</h3>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-white/50">
+              These records share an artist field with evidence from the selected day and occur on a different date.
+            </p>
+          </div>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {artistRelations.map((link) => (
+              <article
+                key={link.related.id + link.artist}
+                className="rounded-2xl border border-white/8 bg-black/10 p-4"
+              >
+                <p className="text-[10px] uppercase tracking-[0.15em] text-lime-200/80">
+                  {link.artist}
+                </p>
+                <h4 className="mt-2 text-sm font-semibold leading-5">
+                  {link.related.title}
+                </h4>
+                <p className="mt-2 text-xs leading-5 text-white/50">
+                  {formatLongDay(dayOf(link.related))} · linked to “{link.sourceTitle}”
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="divide-y divide-white/8">
         {groups.map(([kind, items]) => {
           const isOpen = expanded === kind
@@ -218,7 +270,7 @@ export function ConnectionExplorer({
                         </div>
 
                         <span className="shrink-0 text-xs text-white/50">
-                          {formatTime(receipt.timestamp)}
+                          {formatClockTime(receipt.timestamp)}
                         </span>
                       </div>
 
@@ -252,9 +304,9 @@ export function ConnectionExplorer({
 
       <div className="border-t border-white/10 px-5 py-4 sm:px-7">
         <p className="text-xs leading-5 text-white/50">
-          Relationship shown: these receipts share the same calendar date.
-          The explorer exposes the underlying records so the connection can be
-          inspected rather than inferred.
+          Temporal, artist, and category relationships are derived from fields in
+          the supplied records. The explorer exposes the underlying evidence so
+          each connection can be inspected rather than inferred.
         </p>
       </div>
     </section>
