@@ -1,75 +1,129 @@
-# React + TypeScript + Vite
+﻿# Life Pulse — Your Life, In Receipts
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Life Pulse is a frontend-only interactive data story built for WebRush.
 
-Currently, two official plugins are available:
+It transforms the supplied receipt dataset into:
+Raw data → Patterns → Connections → Evidence → Story
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Receipt and activity overview
+- Connected-day discovery
+- Search and activity filtering
+- Connection Explorer
+- Evidence-based Story Mode
+- Responsive desktop, tablet, and mobile UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Relationship mechanism
 
-## Expanding the ESLint configuration
+A connected day is identified when multiple receipt types occur on the same calendar date.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The user can select a connected day, inspect the underlying records, and move through the day using Story Mode.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Dataset
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+The normalized dataset contains:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- 12,833 receipts
+- 8,881 music sessions
+- 3,952 other activity records
+- 3,131 active days
+- 1,093 connected days
 
-```
+Data files:
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+public/data/receipts.json
+public/data/overview.json
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The lightweight overview is used for the initial page load. The full receipt dataset is loaded only when detailed evidence is needed.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Architecture
 
-```
+Browser
+  ↓
+overview.json
+  ↓
+Dashboard
+  ↓
+User exploration
+  ↓
+receipts.json
+  ↓
+Connection Explorer
+  ↓
+Story Mode
+
+## Tech stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Lucide React
+- Playwright
+- ESLint
+
+No backend, database, or server-side application is required.
+
+## Performance
+
+Production Lighthouse results:
+
+- Performance: 99
+- Accessibility: 100
+- Best Practices: 100
+
+Production metrics:
+
+- FCP: 1.4 s
+- LCP: 1.6 s
+- Speed Index: 1.4 s
+- TBT: 80 ms
+
+## Run locally
+
+Install dependencies:
+
+npm install
+
+Start development:
+
+npm run dev
+
+Build:
+
+npm run build
+
+Preview production build:
+
+npm run preview
+
+## Regenerate overview data
+
+Run:
+
+node scripts/build-overview.cjs
+
+This regenerates:
+
+public/data/overview.json
+
+## Quality checks
+
+The project has been tested for:
+
+- Responsive layouts
+- Horizontal overflow
+- Overview loading
+- Deferred full-dataset loading
+- Explore Moment
+- Story Mode
+- Connection Explorer
+- Accessibility
+- Production performance
+
+## Project status
+
+Core experience complete and production-tested.
+
+Built as a frontend hackathon project.
