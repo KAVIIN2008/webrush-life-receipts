@@ -12,6 +12,7 @@ import {
 import { useReceiptDataset } from './hooks/useReceiptDataset'
 import type { Receipt } from './types/receipt'
 import { ConnectionExplorer } from './components/connections/ConnectionExplorer'
+import { StoryMode } from './components/story/StoryMode'
 
 type Filter = 'all' | 'music' | 'activity'
 
@@ -292,6 +293,12 @@ function App() {
         </section>
 
         {selectedDay && (
+          <StoryMode
+            day={selectedDay}
+            receipts={selectedDayReceipts}
+          />
+        )}
+        {selectedDay && (
           <div ref={connectionRef} className="scroll-mt-6">
             <ConnectionExplorer
               day={selectedDay}
@@ -514,6 +521,7 @@ function Signal({
 }
 
 export default App
+
 
 
 
