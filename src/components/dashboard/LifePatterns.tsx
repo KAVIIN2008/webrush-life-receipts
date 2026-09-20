@@ -76,7 +76,7 @@ export function LifePatterns({ summary, loading, onAnalyze }: Props) {
                 <div className="min-w-[34rem]">
                   <div className="mb-2 grid grid-cols-[3.2rem_repeat(8,minmax(0,1fr))] gap-1 text-[9px] text-white/50">
                     <span />
-                    {summary.heatmap.filter((item, index) => index < 8).map((item) => <span key={item.bucket} className="text-center">{item.bucket.split('–')[0]}</span>)}
+                    {summary.heatmap.slice(0, 8).map((item) => <span key={item.bucket} className="text-center">{item.bucket.split('–')[0]}</span>)}
                   </div>
                   <div className="space-y-1">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
