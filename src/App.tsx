@@ -134,7 +134,7 @@ function App() {
         <div className="text-center">
           <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-white" />
           <p className="text-lg font-semibold">Reading your life in receipts…</p>
-          <p className="mt-1 text-sm text-white/40">Loading the supplied dataset</p>
+          <p className="mt-1 text-sm text-white/50">Loading the supplied dataset</p>
         </div>
       </main>
     )
@@ -163,11 +163,11 @@ function App() {
             </div>
             <div>
               <div className="font-semibold">Life Pulse</div>
-              <div className="text-xs text-white/35">Your Life, In Receipts</div>
+              <div className="text-xs text-white/50">Your Life, In Receipts</div>
             </div>
           </div>
 
-          <div className="hidden rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/40 sm:block">
+          <div className="hidden rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/50 sm:block">
             Raw data → connections → story
           </div>
         </header>
@@ -181,7 +181,7 @@ function App() {
 
             <h1 className="text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
               Your life,
-              <span className="block text-white/40">hidden in receipts.</span>
+              <span className="block text-white/50">hidden in receipts.</span>
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/50 sm:text-lg">
@@ -202,7 +202,7 @@ function App() {
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-7">
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-white/30">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/50">
                   Moment worth exploring
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold">
@@ -235,7 +235,7 @@ function App() {
                     <Link2 className="mt-0.5 text-lime-200" size={18} />
                     <div>
                       <p className="text-sm font-medium">Why this is a connection</p>
-                      <p className="mt-1 text-sm leading-6 text-white/45">
+                      <p className="mt-1 text-sm leading-6 text-white/50">
                         Multiple receipt types occur on the same calendar day.
                         This is a direct relationship visible in the supplied data.
                       </p>
@@ -247,7 +247,7 @@ function App() {
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-[#15161a] p-5 sm:p-7">
-            <p className="text-xs uppercase tracking-[0.18em] text-white/30">
+            <p className="text-xs uppercase tracking-[0.18em] text-white/50">
               Recurring signals
             </p>
 
@@ -292,7 +292,7 @@ function App() {
         <section className="py-12 sm:py-16">
           <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-white/30">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/50">
                 Explore the evidence
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight">
@@ -302,12 +302,12 @@ function App() {
 
             <div className="flex flex-col gap-2 sm:flex-row">
               <label className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3">
-                <Search size={16} className="text-white/30" />
+                <Search size={16} className="text-white/50" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search receipts..."
-                  className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-white/25 sm:w-60"
+                  className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-white/50 sm:w-60"
                 />
               </label>
 
@@ -324,7 +324,7 @@ function App() {
                     className={`rounded-lg px-3 py-2 text-xs transition ${
                       filter === value
                         ? 'bg-white text-black'
-                        : 'text-white/40 hover:text-white'
+                        : 'text-white/50 hover:text-white'
                     }`}
                   >
                     {label}
@@ -343,7 +343,7 @@ function App() {
               <button
                 type="button"
                 onClick={() => setSelectedDay(null)}
-                className="ml-auto text-xs text-white/40 hover:text-white"
+                className="ml-auto text-xs text-white/50 hover:text-white"
               >
                 Clear
               </button>
@@ -366,10 +366,10 @@ function App() {
                       )}
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      <p className="text-[10px] uppercase tracking-[0.16em] text-white/50">
                         {receipt.kind}
                       </p>
-                      <p className="text-xs text-white/35">{formatTime(receipt.timestamp)}</p>
+                      <p className="text-xs text-white/50">{formatTime(receipt.timestamp)}</p>
                     </div>
                   </div>
 
@@ -385,20 +385,20 @@ function App() {
                 </h3>
 
                 {receipt.subtitle && (
-                  <p className="mt-1 line-clamp-2 text-sm leading-5 text-white/40">
+                  <p className="mt-1 line-clamp-2 text-sm leading-5 text-white/50">
                     {receipt.subtitle}
                   </p>
                 )}
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {receipt.category && (
-                    <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] text-white/45">
+                    <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] text-white/50">
                       {receipt.category}
                     </span>
                   )}
 
                   {receipt.location?.city && (
-                    <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] text-white/45">
+                    <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] text-white/50">
                       {receipt.location.city}
                     </span>
                   )}
@@ -408,7 +408,7 @@ function App() {
           </div>
 
           {visibleReceipts.length === 0 && (
-            <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center text-sm text-white/40">
+            <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center text-sm text-white/50">
               No receipts match this view.
             </div>
           )}
@@ -417,13 +417,13 @@ function App() {
         <section className="border-t border-white/10 py-12">
           <div className="grid gap-7 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-white/30">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/50">
                 Connection trail
               </p>
               <h2 className="mt-2 text-3xl font-semibold">
                 Where different parts of the data overlap.
               </h2>
-              <p className="mt-3 text-sm leading-6 text-white/40">
+              <p className="mt-3 text-sm leading-6 text-white/50">
                 Choose a day and inspect the raw receipts behind the pattern.
               </p>
             </div>
@@ -438,18 +438,18 @@ function App() {
                 >
                   <div>
                     <p className="text-sm font-medium">{formatDay(item.day)}</p>
-                    <p className="mt-1 text-xs text-white/30">
+                    <p className="mt-1 text-xs text-white/50">
                       {item.receiptCount} receipts · {item.kinds} types
                     </p>
                   </div>
-                  <ChevronRight size={16} className="text-white/25" />
+                  <ChevronRight size={16} className="text-white/50" />
                 </button>
               ))}
             </div>
           </div>
         </section>
 
-        <footer className="border-t border-white/10 py-7 text-xs text-white/25">
+        <footer className="border-t border-white/10 py-7 text-xs text-white/50">
           Connections shown here are based on observable relationships in the supplied dataset.
         </footer>
       </div>
@@ -468,7 +468,7 @@ function Stat({
 }) {
   return (
     <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-      <div className="flex items-center gap-2 text-white/35">
+      <div className="flex items-center gap-2 text-white/50">
         {icon}
         <span className="text-xs">{label}</span>
       </div>
@@ -492,17 +492,18 @@ function Signal({
 }) {
   return (
     <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-      <div className="flex items-center gap-2 text-white/35">
+      <div className="flex items-center gap-2 text-white/50">
         {icon}
         <span className="text-xs">{label}</span>
       </div>
       <p className="mt-2 truncate font-semibold">{value}</p>
-      <p className="mt-1 text-xs text-white/30">{detail}</p>
+      <p className="mt-1 text-xs text-white/50">{detail}</p>
     </div>
   )
 }
 
 export default App
+
 
 
 
