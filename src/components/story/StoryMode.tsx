@@ -89,12 +89,12 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
     <section className="mb-8 overflow-hidden rounded-[2rem] border border-white/10 bg-[#121318]">
       <div className="border-b border-white/10 px-5 py-4 sm:px-7">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-white/35">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-white/50">
             <Sparkles size={14} className="text-lime-200" />
             Story mode
           </div>
 
-          <div className="text-xs text-white/30">
+          <div className="text-xs text-white/50">
             {chapter + 1} / {totalChapters}
           </div>
         </div>
@@ -102,7 +102,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
 
       <div className="grid min-h-[360px] lg:grid-cols-[0.28fr_0.72fr]">
         <div className="border-b border-white/10 bg-black/10 p-5 lg:border-b-0 lg:border-r lg:p-7">
-          <div className="text-xs text-white/30">Selected day</div>
+          <div className="text-xs text-white/50">Selected day</div>
 
           <h2 className="mt-2 text-2xl font-semibold leading-tight">
             {formatDay(day)}
@@ -118,7 +118,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
           </div>
 
           <div className="mt-7">
-            <div className="mb-2 text-xs uppercase tracking-[0.15em] text-white/25">
+            <div className="mb-2 text-xs uppercase tracking-[0.15em] text-white/50">
               Chapters
             </div>
 
@@ -155,7 +155,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                   <CalendarDays size={20} />
                 </div>
 
-                <p className="mt-6 text-xs uppercase tracking-[0.18em] text-white/30">
+                <p className="mt-6 text-xs uppercase tracking-[0.18em] text-white/50">
                   Chapter 1
                 </p>
 
@@ -163,7 +163,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                   One date. Multiple traces.
                 </h3>
 
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-white/45">
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-white/50">
                   This day contains {receipts.length} receipts across{' '}
                   {groups.length} different receipt types. The story below
                   walks through those records one group at a time.
@@ -173,7 +173,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                   <div className="mt-7 grid gap-3 sm:grid-cols-2">
                     {topArtists.length > 0 && (
                       <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                        <p className="text-xs text-white/30">Artist evidence</p>
+                        <p className="text-xs text-white/50">Artist evidence</p>
                         <p className="mt-2 text-sm font-medium">
                           {topArtists.join(' · ')}
                         </p>
@@ -182,7 +182,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
 
                     {categories.length > 0 && (
                       <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                        <p className="text-xs text-white/30">Category evidence</p>
+                        <p className="text-xs text-white/50">Category evidence</p>
                         <p className="mt-2 text-sm font-medium">
                           {categories.join(' · ')}
                         </p>
@@ -199,7 +199,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                   {iconFor(featuredGroup[0])}
                 </div>
 
-                <p className="mt-6 text-xs uppercase tracking-[0.18em] text-white/30">
+                <p className="mt-6 text-xs uppercase tracking-[0.18em] text-white/50">
                   Chapter {chapter + 1}
                 </p>
 
@@ -207,7 +207,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                   {kindLabel(featuredGroup[0])}
                 </h3>
 
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-white/45">
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-white/50">
                   {featuredGroup[1].length} {kindLabel(featuredGroup[0]).toLowerCase()}
                   {' '}
                   {featuredGroup[1].length === 1 ? 'receipt appears' : 'receipts appear'}
@@ -225,13 +225,13 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                       </p>
 
                       {receipt.subtitle && (
-                        <p className="mt-2 line-clamp-2 text-xs leading-5 text-white/40">
+                        <p className="mt-2 line-clamp-2 text-xs leading-5 text-white/50">
                           {receipt.subtitle}
                         </p>
                       )}
 
                       {receipt.category && (
-                        <span className="mt-3 inline-block rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] text-white/40">
+                        <span className="mt-3 inline-block rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] text-white/50">
                           {receipt.category}
                         </span>
                       )}
@@ -240,7 +240,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                 </div>
 
                 {featuredGroup[1].length > 4 && (
-                  <p className="mt-4 text-xs text-white/25">
+                  <p className="mt-4 text-xs text-white/50">
                     Showing 4 representative records from this chapter.
                   </p>
                 )}
@@ -253,7 +253,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                   <Link2 size={20} />
                 </div>
 
-                <p className="mt-6 text-xs uppercase tracking-[0.18em] text-white/30">
+                <p className="mt-6 text-xs uppercase tracking-[0.18em] text-white/50">
                   Final chapter
                 </p>
 
@@ -261,7 +261,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                   The connection
                 </h3>
 
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-white/45">
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-white/50">
                   The observable relationship is temporal: these different
                   receipt types share the same calendar date.
                 </p>
@@ -273,7 +273,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
                       <p className="text-sm font-medium text-white">
                         {receipts.length} records, {groups.length} types
                       </p>
-                      <p className="mt-1 text-sm leading-6 text-white/45">
+                      <p className="mt-1 text-sm leading-6 text-white/50">
                         The interface connects the records because the supplied
                         dataset places them on the same date — not because it
                         assumes a personal reason for the overlap.
@@ -344,7 +344,7 @@ function ChapterButton({
       className={`w-full rounded-xl px-3 py-2 text-left text-xs transition ${
         active
           ? 'bg-white text-black'
-          : 'text-white/40 hover:bg-white/[0.04] hover:text-white'
+          : 'text-white/50 hover:bg-white/[0.04] hover:text-white'
       }`}
     >
       {label}

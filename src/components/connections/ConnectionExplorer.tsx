@@ -9,10 +9,12 @@
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { Receipt } from '../../types/receipt'
+import { findRelatedByArtist, findRelatedByCategory } from '../../features/patterns/patterns'
 
 type Props = {
   day: string
   receipts: Receipt[]
+  allReceipts: Receipt[]
   onClear: () => void
 }
 
@@ -59,6 +61,7 @@ function TypeIcon({ kind }: { kind: Receipt['kind'] }) {
 export function ConnectionExplorer({
   day,
   receipts,
+  allReceipts,
   onClear,
 }: Props) {
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -75,6 +78,28 @@ export function ConnectionExplorer({
     return [...grouped.entries()].sort((a, b) => b[1].length - a[1].length)
   }, [receipts])
 
+  const observableLinks = useMemo(() => {
+    const artistMatches = new Map<string, number>()
+    const categoryMatches = new Map<string, number>()
+
+    for (const receipt of receipts) {
+      const artistRelated = findRelatedByArtist(receipt, allReceipts, 3)
+      const categoryRelated = findRelatedByCategory(receipt, allReceipts, 3)
+
+      for (const related of artistRelated) {
+        artistMatches.set(related.id, (artistMatches.get(related.id) ?? 0) + 1)
+      }
+      for (const related of categoryRelated) {
+        categoryMatches.set(related.id, (categoryMatches.get(related.id) ?? 0) + 1)
+      }
+    }
+
+    return {
+      artistCount: artistMatches.size,
+      categoryCount: categoryMatches.size,
+    }
+  }, [allReceipts, receipts])
+
   return (
     <section className="mb-10 overflow-hidden rounded-[2rem] border border-lime-300/15 bg-[linear-gradient(135deg,rgba(190,255,80,0.06),rgba(120,100,255,0.05))]">
       <div className="border-b border-white/10 p-5 sm:p-7">
@@ -89,7 +114,7 @@ export function ConnectionExplorer({
               {formatDay(day)}
             </h2>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/45">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/50">
               {receipts.length} receipts appear on this day across{' '}
               {groups.length} different receipt types. Explore each group to see
               the evidence behind the connection.
@@ -107,7 +132,7 @@ export function ConnectionExplorer({
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/8 bg-black/15 p-4">
-            <div className="flex items-center gap-2 text-white/35">
+            <div className="flex items-center gap-2 text-white/50">
               <CalendarDays size={15} />
               <span className="text-xs">Calendar overlap</span>
             </div>
@@ -115,7 +140,7 @@ export function ConnectionExplorer({
           </div>
 
           <div className="rounded-2xl border border-white/8 bg-black/15 p-4">
-            <div className="flex items-center gap-2 text-white/35">
+            <div className="flex items-center gap-2 text-white/50">
               <Link2 size={15} />
               <span className="text-xs">Receipt types</span>
             </div>
@@ -123,12 +148,25 @@ export function ConnectionExplorer({
           </div>
 
           <div className="rounded-2xl border border-white/8 bg-black/15 p-4">
-            <div className="flex items-center gap-2 text-white/35">
+            <div className="flex items-center gap-2 text-white/50">
               <Clock3 size={15} />
               <span className="text-xs">Evidence items</span>
             </div>
             <p className="mt-2 text-xl font-semibold">{receipts.length}</p>
           </div>
+        </div>
+      </div>
+
+      <div className="grid gap-3 border-b border-white/10 p-5 sm:grid-cols-2 sm:p-7">
+        <div className="rounded-2xl border border-white/8 bg-black/10 p-4">
+          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Artist overlap</p>
+          <p className="mt-2 text-xl font-semibold">{observableLinks.artistCount}</p>
+          <p className="mt-1 text-xs leading-5 text-white/50">Selected-day records with the same artist field elsewhere in the supplied data.</p>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-black/10 p-4">
+          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Category overlap</p>
+          <p className="mt-2 text-xl font-semibold">{observableLinks.categoryCount}</p>
+          <p className="mt-1 text-xs leading-5 text-white/50">Selected-day records sharing a category with other supplied records.</p>
         </div>
       </div>
 
@@ -151,13 +189,13 @@ export function ConnectionExplorer({
 
                   <div className="min-w-0">
                     <p className="text-sm font-semibold">{typeLabel(kind)}</p>
-                    <p className="mt-1 text-xs text-white/30">
+                    <p className="mt-1 text-xs text-white/50">
                       {items.length} {items.length === 1 ? 'receipt' : 'receipts'}
                     </p>
                   </div>
                 </div>
 
-                <div className="shrink-0 text-white/30">
+                <div className="shrink-0 text-white/50">
                   {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </div>
               </button>
@@ -171,7 +209,7 @@ export function ConnectionExplorer({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-[10px] uppercase tracking-[0.16em] text-white/25">
+                          <p className="text-[10px] uppercase tracking-[0.16em] text-white/50">
                             {typeLabel(receipt.kind)}
                           </p>
                           <h3 className="mt-1 text-sm font-semibold leading-5">
@@ -179,26 +217,26 @@ export function ConnectionExplorer({
                           </h3>
                         </div>
 
-                        <span className="shrink-0 text-xs text-white/30">
+                        <span className="shrink-0 text-xs text-white/50">
                           {formatTime(receipt.timestamp)}
                         </span>
                       </div>
 
                       {receipt.subtitle && (
-                        <p className="mt-2 text-xs leading-5 text-white/40">
+                        <p className="mt-2 text-xs leading-5 text-white/50">
                           {receipt.subtitle}
                         </p>
                       )}
 
                       <div className="mt-3 flex flex-wrap gap-2">
                         {receipt.category && (
-                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/40">
+                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/50">
                             {receipt.category}
                           </span>
                         )}
 
                         {receipt.location?.city && (
-                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/40">
+                          <span className="rounded-full bg-white/[0.06] px-2 py-1 text-[10px] text-white/50">
                             {receipt.location.city}
                           </span>
                         )}
@@ -213,7 +251,7 @@ export function ConnectionExplorer({
       </div>
 
       <div className="border-t border-white/10 px-5 py-4 sm:px-7">
-        <p className="text-xs leading-5 text-white/30">
+        <p className="text-xs leading-5 text-white/50">
           Relationship shown: these receipts share the same calendar date.
           The explorer exposes the underlying records so the connection can be
           inspected rather than inferred.
