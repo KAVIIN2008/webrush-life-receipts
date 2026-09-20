@@ -10,19 +10,11 @@ import {
   WalletCards,
 } from 'lucide-react'
 import type { Receipt } from '../../types/receipt'
+import { formatLongDay } from '../../utils/formatting'
 
 type StoryModeProps = {
   day: string
   receipts: Receipt[]
-}
-
-function formatDay(day: string) {
-  return new Intl.DateTimeFormat('en-IN', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(`${day}T00:00:00`))
 }
 
 function kindLabel(kind: Receipt['kind']) {
@@ -105,7 +97,7 @@ export function StoryMode({ day, receipts }: StoryModeProps) {
           <div className="text-xs text-white/50">Selected day</div>
 
           <h2 className="mt-2 text-2xl font-semibold leading-tight">
-            {formatDay(day)}
+            {formatLongDay(day)}
           </h2>
 
           <div className="mt-6 space-y-2">
