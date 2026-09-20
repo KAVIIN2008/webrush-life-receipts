@@ -12,7 +12,6 @@ import { Signal } from '../components/ui/Signal'
 import { useReceiptDataset } from '../hooks/useReceiptDataset'
 import { filterReceipts, type ReceiptFilter, dayOf } from '../features/receipts/selectors'
 import { buildPatternSummary, type PatternSummary } from '../features/patterns/patterns'
-import { formatDay } from '../utils/formatting'
 import type { Receipt } from '../types/receipt'
 
 const StoryMode = lazy(() => import('../components/story/StoryMode').then((module) => ({ default: module.StoryMode })))
