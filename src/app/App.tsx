@@ -1,9 +1,11 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { CalendarDays, Link2, Music2, ReceiptText, WalletCards } from 'lucide-react'
+import { CalendarDays } from 'lucide-react'
 import { EvidenceExplorer } from '../components/receipts/EvidenceExplorer'
 import { Header } from '../components/layout/Header'
 import { Footer } from '../components/layout/Footer'
 import { Hero } from '../components/dashboard/Hero'
+import { StatsGrid } from '../components/dashboard/StatsGrid'
+import { ErrorState, LoadingState } from '../components/layout/AppStatus'
 import { MomentCard } from '../components/dashboard/MomentCard'
 import { ConnectionTrail } from '../components/connections/ConnectionTrail'
 import { Stat } from '../components/ui/Stat'
@@ -77,26 +79,11 @@ function App() {
   }, [loadFullDataset, patterns, patternsLoading])
 
   if (loading) {
-    return (
-      <main className="grid min-h-screen place-items-center bg-[#0c0d0f] text-white">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-white" />
-          <p className="text-lg font-semibold">Reading your life in receipts…</p>
-          <p className="mt-1 text-sm text-white/50">Loading the supplied dataset</p>
-        </div>
-      </main>
-    )
+    return <LoadingState />
   }
 
   if (error) {
-    return (
-      <main className="grid min-h-screen place-items-center bg-[#0c0d0f] p-6 text-white">
-        <div className="max-w-lg rounded-3xl border border-red-400/20 bg-red-400/5 p-7">
-          <h1 className="text-xl font-semibold">Dataset could not be loaded</h1>
-          <p className="mt-2 text-sm text-white/50">{error}</p>
-        </div>
-      </main>
-    )
+    return <ErrorState message={error} />
   }
 
   return (
@@ -106,12 +93,7 @@ function App() {
         <Header />
         <Hero />
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat icon={<ReceiptText size={17} />} label="Receipts" value={overview?.totalReceipts ?? receipts.length} />
-          <Stat icon={<Music2 size={17} />} label="Music sessions" value={overview?.musicCount ?? 0} />
-          <Stat icon={<WalletCards size={17} />} label="Other activity" value={overview?.activityCount ?? 0} />
-          <Stat icon={<Link2 size={17} />} label="Connected days" value={overview?.connectedDayCount ?? 0} />
-        </div>
+        <StatsGrid total={overview?.totalReceipts ?? receipts.length} music={overview?.musicCount ?? 0} activity={overview?.activityCount ?? 0} connectedDays={overview?.connectedDayCount ?? 0} />
 
         <section className="mt-8 grid gap-5 lg:grid-cols-[1.35fr_0.65fr]">
           {featured ? (
@@ -128,8 +110,8 @@ function App() {
           <div className="rounded-[2rem] border border-white/10 bg-[#15161a] p-5 sm:p-7">
             <p className="text-xs uppercase tracking-[0.18em] text-white/50">Recurring signals</p>
             <div className="mt-5 space-y-3">
-              <Signal icon={<Music2 size={17} />} label="Repeated artist" value={overview?.topArtist?.[0] ?? '—'} detail={overview?.topArtist ? overview.topArtist[1] + ' represented sessions' : 'No artist data'} />
-              <Signal icon={<ReceiptText size={17} />} label="Common category" value={overview?.topCategory?.[0] ?? '—'} detail={overview?.topCategory ? overview.topCategory[1] + ' receipts' : 'No category data'} />
+              <Signal icon={<CalendarDays size={17} /> label="Repeated artist" value={overview?.topArtist?.[0] ?? '—'} detail={overview?.topArtist ? overview.topArtist[1] + ' represented sessions' : 'No artist data'} />
+              <Signal icon={<CalendarDays size={17} /> label="Common category" value={overview?.topCategory?.[0] ?? '—'} detail={overview?.topCategory ? overview.topCategory[1] + ' receipts' : 'No category data'} />
               <Signal icon={<CalendarDays size={17} />} label="Active days" value={(overview?.activeDays ?? 0).toLocaleString('en-IN')} detail="Dates represented in the dataset" />
             </div>
           </div>
