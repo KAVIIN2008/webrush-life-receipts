@@ -1,4 +1,4 @@
-import { CalendarDays, Music2, Search, WalletCards } from 'lucide-react'
+import { CalendarDays, Search } from 'lucide-react'
 import type { Receipt } from '../../types/receipt'
 import type { ReceiptFilter } from '../../features/receipts/selectors'
 import { formatDay } from '../../utils/formatting'
