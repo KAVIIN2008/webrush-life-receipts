@@ -1,59 +1,139 @@
-﻿# Life Pulse — Your Life, In Receipts
+# Life Pulse — Your Life, In Receipts
 
-Life Pulse is a frontend-only interactive data story built for WebRush.
+Life Pulse is a frontend-only interactive data story built for WebRush. It turns the supplied life-activity dataset into:
 
-It transforms the supplied receipt dataset into:
-Raw data → Patterns → Connections → Evidence → Story
+**Raw data → Patterns → Connections → Evidence → Story**
 
-## Features
+## What the experience does
 
-- Receipt and activity overview
-- Connected-day discovery
-- Search and activity filtering
-- Connection Explorer
-- Evidence-based Story Mode
-- Responsive desktop, tablet, and mobile UI
+- **Overview:** presents dataset scale and recurring signals without loading the full receipt file.
+- **Moment exploration:** selects a connected calendar day and loads its detailed evidence on demand.
+- **Evidence Explorer:** searches and filters receipt records.
+- **Life Patterns:** derives monthly activity, time-of-day rhythm, category signals, and a 7×8 activity heatmap from the supplied records.
+- **Connection Explorer:** groups a selected day by receipt type and exposes the underlying records.
+- **Story Mode:** walks through the selected day as evidence-based chapters.
+- **Responsive UI:** designed for desktop, tablet, and mobile layouts.
 
-## Relationship mechanism
+## Relationship mechanisms
 
-A connected day is identified when multiple receipt types occur on the same calendar date.
+The project uses observable relationships rather than invented personal explanations:
 
-The user can select a connected day, inspect the underlying records, and move through the day using Story Mode.
+1. **Temporal relationship:** multiple receipt types occurring on the same calendar day.
+2. **Artist relationship:** records sharing an artist field can be related.
+3. **Category relationship:** records sharing a category can be related.
 
-## Dataset
+The current connection UI foregrounds the temporal relationship because it is the clearest cross-type relationship in the supplied dataset. Pattern analysis exposes the other observable dimensions.
 
-The normalized dataset contains:
+## Data architecture
 
-- 12,833 receipts
-- 8,881 music sessions
-- 3,952 other activity records
-- 3,131 active days
-- 1,093 connected days
+The initial page uses a small derived overview:
 
-Data files:
+`public/data/overview.json`
 
-public/data/receipts.json
-public/data/overview.json
+The detailed records remain in:
 
-The lightweight overview is used for the initial page load. The full receipt dataset is loaded only when detailed evidence is needed.
+`public/data/receipts.json`
 
-## Architecture
+The application does not load the full receipt dataset until the user requests deeper analysis through search/filtering, moment exploration, or Life Patterns.
 
-Browser
-  ↓
+### Flow
+
+```text
+Supplied dataset
+      ↓
+Overview builder
+      ↓
 overview.json
-  ↓
-Dashboard
-  ↓
-User exploration
-  ↓
-receipts.json
-  ↓
-Connection Explorer
-  ↓
-Story Mode
+      ↓
+Fast initial dashboard
+      ↓
+User requests evidence / patterns
+      ↓
+receipts.json loaded on demand
+      ↓
+Selectors + pattern analysis
+      ↓
+Story Mode / Connection Explorer
+```
 
-## Tech stack
+## Component architecture
+
+```text
+src/
+├── components/
+│   ├── dashboard/
+│   │   ├── ActivityChart.tsx
+│   │   └── LifePatterns.tsx
+│   ├── layout/
+│   │   ├── Header.tsx
+│   │   └── Footer.tsx
+│   ├── receipts/
+│   │   ├── EvidenceExplorer.tsx
+│   │   └── ReceiptCard.tsx
+│   ├── connections/
+│   │   └── ConnectionExplorer.tsx
+│   ├── story/
+│   │   └── StoryMode.tsx
+│   └── ui/
+│       ├── Signal.tsx
+│       └── Stat.tsx
+├── features/
+│   ├── patterns/
+│   │   └── patterns.ts
+│   └── receipts/
+│       ├── analysis.ts
+│       ├── data.ts
+│       └── selectors.ts
+├── hooks/
+│   └── useReceiptDataset.ts
+└── utils/
+    └── formatting.ts
+```
+
+`App.tsx` is intentionally a composition shell. Heavy interactive sections use dynamic imports and Suspense boundaries.
+
+## Pattern analysis
+
+Life Patterns is calculated from the actual receipt fields:
+
+- monthly receipt volume
+- time-of-day buckets
+- day-of-week × time-of-day heatmap
+- non-music category counts
+- neutral observed-pattern summary
+
+Pattern labels are descriptive. They are not claims about personality, intent, or identity.
+
+## Performance decisions
+
+- Lightweight overview loaded first.
+- Full dataset deferred until needed.
+- Story, connection, and pattern sections are dynamically imported.
+- React and Lucide are split into separate vendor chunks during production builds.
+- Document metadata includes a description, Open Graph tags, theme color, and an overview preload hint.
+- Receipt cards are memoized because they are repeated list items.
+
+## Accessibility and responsive design
+
+- Semantic sections and navigation landmarks.
+- Search input has an accessible label.
+- Filter controls expose `aria-pressed`.
+- Expandable connection groups expose `aria-expanded`.
+- Interactive controls include visible keyboard focus states.
+- Layouts are tested at mobile, tablet, and desktop viewport sizes.
+- Contrast was checked with a production Lighthouse audit.
+
+## Dataset summary
+
+The normalized supplied dataset contains:
+
+- **12,833 receipts**
+- **8,881 music sessions**
+- **3,952 other activity records**
+- **3,131 active days**
+- **1,093 connected days**
+
+## Technology
 
 - React
 - TypeScript
@@ -62,68 +142,54 @@ Story Mode
 - Lucide React
 - Playwright
 - ESLint
+- Vercel
 
-No backend, database, or server-side application is required.
+No backend, database, or server-side application logic is required.
 
-## Performance
+## Local development
 
-Production Lighthouse results:
-
-- Performance: 99
-- Accessibility: 100
-- Best Practices: 100
-
-Production metrics:
-
-- FCP: 1.4 s
-- LCP: 1.6 s
-- Speed Index: 1.4 s
-- TBT: 80 ms
-
-## Run locally
-
-Install dependencies:
-
+```bash
 npm install
-
-Start development:
-
 npm run dev
+```
 
-Build:
+Production build:
 
+```bash
 npm run build
-
-Preview production build:
-
 npm run preview
+```
 
-## Regenerate overview data
+Lint:
 
-Run:
+```bash
+npm run lint
+```
 
+Regenerate the lightweight overview after changing the supplied normalized dataset:
+
+```bash
 node scripts/build-overview.cjs
+```
 
-This regenerates:
+## Quality verification
 
-public/data/overview.json
+The project is checked for:
 
-## Quality checks
-
-The project has been tested for:
-
-- Responsive layouts
-- Horizontal overflow
-- Overview loading
-- Deferred full-dataset loading
+- production build success
+- lint cleanliness
+- overview loading
+- deferred full-dataset loading
+- responsive layouts
+- horizontal overflow
+- keyboard-accessible controls
 - Explore Moment
 - Story Mode
 - Connection Explorer
-- Accessibility
-- Production performance
+- production performance and accessibility
 
-## Project status
+## Design rationale
 
-Core experience complete and production-tested.
+The project deliberately separates **fast orientation** from **deep evidence inspection**. A user can understand the dataset before downloading the full receipt collection. Once a user asks a question—searching, filtering, opening a connected day, or revealing patterns—the application loads the detailed records needed to answer it.
 
-Built as a frontend hackathon project.
+That keeps the initial experience lightweight while preserving a rich, data-grounded exploration path.
