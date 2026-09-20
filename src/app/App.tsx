@@ -8,7 +8,6 @@ import { StatsGrid } from '../components/dashboard/StatsGrid'
 import { ErrorState, LoadingState } from '../components/layout/AppStatus'
 import { MomentCard } from '../components/dashboard/MomentCard'
 import { ConnectionTrail } from '../components/connections/ConnectionTrail'
-import { Stat } from '../components/ui/Stat'
 import { Signal } from '../components/ui/Signal'
 import { useReceiptDataset } from '../hooks/useReceiptDataset'
 import { filterReceipts, type ReceiptFilter, dayOf } from '../features/receipts/selectors'
@@ -110,8 +109,8 @@ function App() {
           <div className="rounded-[2rem] border border-white/10 bg-[#15161a] p-5 sm:p-7">
             <p className="text-xs uppercase tracking-[0.18em] text-white/50">Recurring signals</p>
             <div className="mt-5 space-y-3">
-              <Signal icon={<CalendarDays size={17} /> label="Repeated artist" value={overview?.topArtist?.[0] ?? '—'} detail={overview?.topArtist ? overview.topArtist[1] + ' represented sessions' : 'No artist data'} />
-              <Signal icon={<CalendarDays size={17} /> label="Common category" value={overview?.topCategory?.[0] ?? '—'} detail={overview?.topCategory ? overview.topCategory[1] + ' receipts' : 'No category data'} />
+              <Signal icon={<span aria-hidden="true">♪</span>} label="Repeated artist" value={overview?.topArtist?.[0] ?? '—'} detail={overview?.topArtist ? overview.topArtist[1] + ' represented sessions' : 'No artist data'} />
+              <Signal icon={<span aria-hidden="true">◈</span>} label="Common category" value={overview?.topCategory?.[0] ?? '—'} detail={overview?.topCategory ? overview.topCategory[1] + ' receipts' : 'No category data'} />
               <Signal icon={<CalendarDays size={17} />} label="Active days" value={(overview?.activeDays ?? 0).toLocaleString('en-IN')} detail="Dates represented in the dataset" />
             </div>
           </div>
