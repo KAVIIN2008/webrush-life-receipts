@@ -77,11 +77,12 @@ src/
 │   └── ui/
 │       ├── Signal.tsx
 │       └── Stat.tsx
+├── app/
+│   └── App.tsx
 ├── features/
 │   ├── patterns/
 │   │   └── patterns.ts
 │   └── receipts/
-│       ├── analysis.ts
 │       ├── data.ts
 │       └── selectors.ts
 ├── hooks/
@@ -90,7 +91,7 @@ src/
     └── formatting.ts
 ```
 
-`App.tsx` is intentionally a composition shell. Heavy interactive sections use dynamic imports and Suspense boundaries.
+`src/app/App.tsx` is intentionally a thin composition shell. Formatting helpers live in `src/utils/formatting.ts`, receipt filtering lives in `src/features/receipts/selectors.ts`, and heavy interactive sections use dynamic imports and Suspense boundaries.
 
 ## Pattern analysis
 
