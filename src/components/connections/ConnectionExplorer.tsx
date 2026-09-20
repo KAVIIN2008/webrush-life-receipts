@@ -9,10 +9,12 @@
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { Receipt } from '../../types/receipt'
+import { findRelatedByArtist, findRelatedByCategory } from '../../features/patterns/patterns'
 
 type Props = {
   day: string
   receipts: Receipt[]
+  allReceipts: Receipt[]
   onClear: () => void
 }
 
@@ -59,6 +61,7 @@ function TypeIcon({ kind }: { kind: Receipt['kind'] }) {
 export function ConnectionExplorer({
   day,
   receipts,
+  allReceipts,
   onClear,
 }: Props) {
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -74,6 +77,28 @@ export function ConnectionExplorer({
 
     return [...grouped.entries()].sort((a, b) => b[1].length - a[1].length)
   }, [receipts])
+
+  const observableLinks = useMemo(() => {
+    const artistMatches = new Map<string, number>()
+    const categoryMatches = new Map<string, number>()
+
+    for (const receipt of receipts) {
+      const artistRelated = findRelatedByArtist(receipt, allReceipts, 3)
+      const categoryRelated = findRelatedByCategory(receipt, allReceipts, 3)
+
+      for (const related of artistRelated) {
+        artistMatches.set(related.id, (artistMatches.get(related.id) ?? 0) + 1)
+      }
+      for (const related of categoryRelated) {
+        categoryMatches.set(related.id, (categoryMatches.get(related.id) ?? 0) + 1)
+      }
+    }
+
+    return {
+      artistCount: artistMatches.size,
+      categoryCount: categoryMatches.size,
+    }
+  }, [allReceipts, receipts])
 
   return (
     <section className="mb-10 overflow-hidden rounded-[2rem] border border-lime-300/15 bg-[linear-gradient(135deg,rgba(190,255,80,0.06),rgba(120,100,255,0.05))]">
@@ -129,6 +154,19 @@ export function ConnectionExplorer({
             </div>
             <p className="mt-2 text-xl font-semibold">{receipts.length}</p>
           </div>
+        </div>
+      </div>
+
+      <div className="grid gap-3 border-b border-white/10 p-5 sm:grid-cols-2 sm:p-7">
+        <div className="rounded-2xl border border-white/8 bg-black/10 p-4">
+          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Artist overlap</p>
+          <p className="mt-2 text-xl font-semibold">{observableLinks.artistCount}</p>
+          <p className="mt-1 text-xs leading-5 text-white/50">Selected-day records with the same artist field elsewhere in the supplied data.</p>
+        </div>
+        <div className="rounded-2xl border border-white/8 bg-black/10 p-4">
+          <p className="text-xs uppercase tracking-[0.16em] text-white/50">Category overlap</p>
+          <p className="mt-2 text-xl font-semibold">{observableLinks.categoryCount}</p>
+          <p className="mt-1 text-xs leading-5 text-white/50">Selected-day records sharing a category with other supplied records.</p>
         </div>
       </div>
 
