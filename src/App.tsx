@@ -1,4 +1,4 @@
-﻿import { useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   CalendarDays,
   ChevronRight,
@@ -11,6 +11,8 @@ import {
 } from 'lucide-react'
 import { useReceiptDataset } from './hooks/useReceiptDataset'
 import type { Receipt } from './types/receipt'
+
+const EMPTY_RECEIPTS: Receipt[] = []
 import { ConnectionExplorer } from './components/connections/ConnectionExplorer'
 import { StoryMode } from './components/story/StoryMode'
 
@@ -40,61 +42,23 @@ function formatTime(timestamp?: string | null) {
 }
 
 function App() {
-  const { data, loading, error } = useReceiptDataset()
+  const { overview, data, loading, error, loadFullDataset } = useReceiptDataset()
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const connectionRef = useRef<HTMLDivElement | null>(null)
 
-  const receipts = data?.receipts ?? []
+  const receipts = data?.receipts ?? overview?.previewReceipts ?? EMPTY_RECEIPTS
 
-  const analysis = useMemo(() => {
-    const days = new Map<string, Receipt[]>()
-    const categories = new Map<string, number>()
-    const artists = new Map<string, number>()
-
-    for (const receipt of receipts) {
-      const day = dayOf(receipt)
-
-      if (day) {
-        const existing = days.get(day) ?? []
-        existing.push(receipt)
-        days.set(day, existing)
-      }
-
-      if (receipt.category) {
-        categories.set(
-          receipt.category,
-          (categories.get(receipt.category) ?? 0) + 1,
-        )
-      }
-
-      for (const artist of receipt.meta?.topArtists ?? []) {
-        artists.set(artist, (artists.get(artist) ?? 0) + 1)
-      }
-    }
-
-    const connectedDays = [...days.entries()]
-      .map(([day, items]) => ({
-        day,
-        receipts: items,
-        kinds: new Set(items.map((item) => item.kind)).size,
-      }))
-      .filter((item) => item.kinds >= 2)
-      .sort((a, b) => b.receipts.length - a.receipts.length)
-
-    const topCategory = [...categories.entries()].sort((a, b) => b[1] - a[1])[0]
-    const topArtist = [...artists.entries()].sort((a, b) => b[1] - a[1])[0]
-
-    return {
-      activeDays: days.size,
-      connectedDays,
-      music: receipts.filter((r) => r.kind === 'music').length,
-      activity: receipts.filter((r) => r.kind !== 'music').length,
-      topCategory,
-      topArtist,
-    }
-  }, [receipts])
+  const analysis = useMemo(() => ({
+    activeDays: overview?.activeDays ?? 0,
+    connectedDays: overview?.connectedDays ?? [],
+    connectedDayCount: overview?.connectedDayCount ?? 0,
+    music: overview?.musicCount ?? 0,
+    activity: overview?.activityCount ?? 0,
+    topCategory: overview?.topCategory ?? null,
+    topArtist: overview?.topArtist ?? null,
+  }), [overview])
 
   const visibleReceipts = useMemo(() => {
     const text = query.toLowerCase().trim()
@@ -135,15 +99,33 @@ function App() {
 
   const featured = analysis.connectedDays[0]
 
-  const selectedDayReceipts = selectedDay
-    ? receipts.filter((receipt) => dayOf(receipt) === selectedDay)
-    : []
+  const selectedDayReceipts =
+    selectedDay && data
+      ? data.receipts.filter(
+          (receipt) => dayOf(receipt) === selectedDay,
+        )
+      : []
 
-  const selectDay = (day: string) => {
-    setSelectedDay(day)
-    window.setTimeout(() => {
-      connectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 50)
+  useEffect(() => {
+    if ((query.trim() || filter !== 'all') && !data) {
+      void loadFullDataset()
+    }
+  }, [query, filter, data, loadFullDataset])
+
+  const selectDay = async (day: string) => {
+    try {
+      await loadFullDataset()
+      setSelectedDay(day)
+
+      window.setTimeout(() => {
+        connectionRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }, 50)
+    } catch {
+      // Full dataset errors are handled by the data hook.
+    }
   }
 
   if (loading) {
@@ -209,10 +191,10 @@ function App() {
           </div>
 
           <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Stat icon={<ReceiptText size={17} />} label="Receipts" value={receipts.length} />
+            <Stat icon={<ReceiptText size={17} />} label="Receipts" value={overview?.totalReceipts ?? receipts.length} />
             <Stat icon={<Music2 size={17} />} label="Music sessions" value={analysis.music} />
             <Stat icon={<WalletCards size={17} />} label="Other activity" value={analysis.activity} />
-            <Stat icon={<Link2 size={17} />} label="Connected days" value={analysis.connectedDays.length} />
+            <Stat icon={<Link2 size={17} />} label="Connected days" value={analysis.connectedDayCount} />
           </div>
         </section>
 
@@ -243,7 +225,7 @@ function App() {
             {featured && (
               <>
                 <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                  <Stat label="Receipts that day" value={featured.receipts.length} />
+                  <Stat label="Receipts that day" value={featured.receiptCount} />
                   <Stat label="Receipt types" value={featured.kinds} />
                   <Stat label="Active day" value={formatDay(featured.day)} />
                 </div>
@@ -457,7 +439,7 @@ function App() {
                   <div>
                     <p className="text-sm font-medium">{formatDay(item.day)}</p>
                     <p className="mt-1 text-xs text-white/30">
-                      {item.receipts.length} receipts · {item.kinds} types
+                      {item.receiptCount} receipts · {item.kinds} types
                     </p>
                   </div>
                   <ChevronRight size={16} className="text-white/25" />
@@ -521,6 +503,11 @@ function Signal({
 }
 
 export default App
+
+
+
+
+
 
 
 

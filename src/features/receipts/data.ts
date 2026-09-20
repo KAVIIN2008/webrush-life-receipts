@@ -68,3 +68,83 @@ export async function loadReceiptDataset(): Promise<ReceiptDataset> {
   return data;
 }
 
+
+export interface ConnectedDayOverview {
+  day: string
+  receiptCount: number
+  kinds: number
+}
+
+export interface ReceiptOverview {
+  version: number
+  totalReceipts: number
+  musicCount: number
+  activityCount: number
+  activeDays: number
+  connectedDays: ConnectedDayOverview[]
+  connectedDayCount: number
+  topCategory: [string, number] | null
+  topArtist: [string, number] | null
+  previewReceipts: Receipt[]
+}
+
+const OVERVIEW_URL = '/data/overview.json'
+
+function isPair(value: unknown): value is [string, number] {
+  return (
+    Array.isArray(value) &&
+    value.length === 2 &&
+    typeof value[0] === 'string' &&
+    typeof value[1] === 'number'
+  )
+}
+
+function isOverview(value: unknown): value is ReceiptOverview {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  const overview = value as Partial<ReceiptOverview>
+
+  return (
+    typeof overview.version === 'number' &&
+    typeof overview.totalReceipts === 'number' &&
+    typeof overview.musicCount === 'number' &&
+    typeof overview.activityCount === 'number' &&
+    typeof overview.activeDays === 'number' &&
+    typeof overview.connectedDayCount === 'number' &&
+    Array.isArray(overview.connectedDays) &&
+    overview.connectedDays.every(
+      (item) =>
+        item &&
+        typeof item.day === 'string' &&
+        typeof item.receiptCount === 'number' &&
+        typeof item.kinds === 'number',
+    ) &&
+    (overview.topCategory === null || isPair(overview.topCategory)) &&
+    (overview.topArtist === null || isPair(overview.topArtist)) &&
+    Array.isArray(overview.previewReceipts) &&
+    overview.previewReceipts.every(isReceipt)
+  )
+}
+
+export async function loadReceiptOverview(): Promise<ReceiptOverview> {
+  const response = await fetch(OVERVIEW_URL)
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to load receipt overview (${response.status})`,
+    )
+  }
+
+  const data: unknown = await response.json()
+
+  if (!isOverview(data)) {
+    throw new Error(
+      'Receipt overview has an unexpected structure.',
+    )
+  }
+
+  return data
+}
+

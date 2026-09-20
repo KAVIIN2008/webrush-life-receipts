@@ -1,59 +1,117 @@
-﻿import { useEffect, useState } from 'react';
+﻿import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import {
   loadReceiptDataset,
-} from '../features/receipts/data';
+  loadReceiptOverview,
+} from '../features/receipts/data'
 
-import type { ReceiptDataset } from '../types/receipt';
+import type { ReceiptDataset } from '../types/receipt'
+import type { ReceiptOverview } from '../features/receipts/data'
 
 interface ReceiptDatasetState {
-  data: ReceiptDataset | null;
-  loading: boolean;
-  error: string | null;
+  overview: ReceiptOverview | null
+  data: ReceiptDataset | null
+  loading: boolean
+  fullLoading: boolean
+  error: string | null
+  fullError: string | null
+  loadFullDataset: () => Promise<ReceiptDataset>
 }
 
 export function useReceiptDataset(): ReceiptDatasetState {
-  const [state, setState] =
-    useState<ReceiptDatasetState>({
-      data: null,
-      loading: true,
-      error: null,
-    });
+  const [overview, setOverview] = useState<ReceiptOverview | null>(null)
+  const [data, setData] = useState<ReceiptDataset | null>(null)
+
+  const [loading, setLoading] = useState(true)
+  const [fullLoading, setFullLoading] = useState(false)
+
+  const [error, setError] = useState<string | null>(null)
+  const [fullError, setFullError] = useState<string | null>(null)
+
+  const fullLoadRef = useRef<Promise<ReceiptDataset> | null>(null)
 
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
-    loadReceiptDataset()
-      .then((data) => {
+    loadReceiptOverview()
+      .then((result) => {
         if (cancelled) {
-          return;
+          return
         }
 
-        setState({
-          data,
-          loading: false,
-          error: null,
-        });
+        setOverview(result)
+        setLoading(false)
+        setError(null)
       })
-      .catch((error: unknown) => {
+      .catch((loadError: unknown) => {
         if (cancelled) {
-          return;
+          return
         }
 
-        setState({
-          data: null,
-          loading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : 'Unable to load receipt data.',
-        });
-      });
+        setLoading(false)
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : 'Unable to load receipt overview.',
+        )
+      })
 
     return () => {
-      cancelled = true;
-    };
-  }, []);
+      cancelled = true
+    }
+  }, [])
 
-  return state;
+  const loadFullDataset = useCallback(async () => {
+    if (data) {
+      return data
+    }
+
+    if (fullLoadRef.current) {
+      return fullLoadRef.current
+    }
+
+    setFullLoading(true)
+    setFullError(null)
+
+    const promise = loadReceiptDataset()
+      .then((dataset) => {
+        setData(dataset)
+        setFullLoading(false)
+        return dataset
+      })
+      .catch((loadError: unknown) => {
+        setFullLoading(false)
+
+        const message =
+          loadError instanceof Error
+            ? loadError.message
+            : 'Unable to load the full receipt dataset.'
+
+        setFullError(message)
+
+        throw loadError
+      })
+      .finally(() => {
+        fullLoadRef.current = null
+      })
+
+    fullLoadRef.current = promise
+
+    return promise
+  }, [data])
+
+  return {
+    overview,
+    data,
+    loading,
+    fullLoading,
+    error,
+    fullError,
+    loadFullDataset,
+  }
 }
