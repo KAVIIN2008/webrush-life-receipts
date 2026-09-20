@@ -1,4 +1,4 @@
-import { CalendarDays, Link2, Music2, ReceiptText, WalletCards } from 'lucide-react'
+import { Link2, Music2, ReceiptText, WalletCards } from 'lucide-react'
 import { Stat } from '../ui/Stat'
 
 type Props = {
@@ -17,8 +17,4 @@ export function StatsGrid({ total, music, activity, connectedDays }: Props) {
       <Stat icon={<Link2 size={17} />} label="Connected days" value={connectedDays} />
     </div>
   )
-}
-
-export function ActiveDaySignal({ value }: { value: string }) {
-  return <Stat icon={<CalendarDays size={17} />} label="Active days" value={value} />
 }
